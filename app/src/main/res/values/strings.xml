@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Spirala1</string>
+    <string name="search">Search</string>
+    <string name="favorite">Favorite</string>
+    <string name="recent">Recent</string>
+    <color name="purple_700">#7E57C2</color>
+</resources>
