@@ -1,6 +1,7 @@
 package com.example.spirala1
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -28,14 +29,24 @@ class MainActivity : AppCompatActivity() {
             LinearLayoutManager.HORIZONTAL,
             false
         )
-        favoriteMoviesAdapter = MovieListAdapter(listOf())
+        favoriteMoviesAdapter = MovieListAdapter(arrayListOf()) { movie -> showMovieDetails(movie) }
         favoriteMovies.adapter = favoriteMoviesAdapter
         favoriteMoviesAdapter.updateMovies(favoriteMoviesList)
+
+
+    }
+
+    private fun showMovieDetails(movie: Movie) {
+        val intent = Intent(this, MovieDetailActivity::class.java).apply {
+            putExtra("movie_title", movie.title)
+        }
+        startActivity(intent)
     }
 }
 
 class MovieListAdapter(
-    private var movies: List<Movie>
+    private var movies: List<Movie>,
+    private val onItemClicked: (movie:Movie) -> Unit
 ) : RecyclerView.Adapter<MovieListAdapter.MovieViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MovieViewHolder {
         val view = LayoutInflater
@@ -54,6 +65,7 @@ class MovieListAdapter(
         if (id==0) id=context.resources
             .getIdentifier("picture1", "drawable", context.packageName)
         holder.movieImage.setImageResource(id)
+        holder.itemView.setOnClickListener{ onItemClicked(movies[position]) }
     }
     fun updateMovies(movies: List<Movie>) {
         this.movies = movies
