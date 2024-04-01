@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Cinaeste</string>
+    <string name="search">Pretraži</string>
+    <string name="favorite">Omiljeno</string>
+    <string name="recent">Nedavno</string>
+    <color name="purple_700">#7E57C2</color>
+</resources>
