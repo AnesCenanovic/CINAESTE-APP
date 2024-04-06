@@ -5,12 +5,16 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
+import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 class MovieDetailActivity : AppCompatActivity() {
     private lateinit var movie: Movie
@@ -20,6 +24,8 @@ class MovieDetailActivity : AppCompatActivity() {
     private lateinit var genre : TextView
     private lateinit var website : TextView
     private lateinit var poster : ImageView
+    private lateinit var shareButton: FloatingActionButton
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_movie_detail)
@@ -29,6 +35,7 @@ class MovieDetailActivity : AppCompatActivity() {
         genre = findViewById(R.id.movie_genre)
         poster = findViewById(R.id.movie_poster)
         website = findViewById(R.id.movie_website)
+        shareButton = findViewById(R.id.shareButton)
         val extras = intent.extras
         if (extras != null) {
             movie = getMovieByTitle(extras.getString("movie_title",""))
@@ -38,6 +45,12 @@ class MovieDetailActivity : AppCompatActivity() {
         }
         website.setOnClickListener{
             showWebsite()
+        }
+        title.setOnClickListener {
+            searchWebsite()
+        }
+        shareButton.setOnClickListener {
+            shareMovieDetails()
         }
     }
     private fun populateDetails() {
@@ -66,7 +79,28 @@ class MovieDetailActivity : AppCompatActivity() {
         try {
             startActivity(webIntent)
         } catch (e: ActivityNotFoundException) {
-            // Definisati naredbe ako ne postoji aplikacija za navedenu akciju
+        }
+    }
+    private fun searchWebsite(){
+        val movieTitle = movie.title.replace(" ", "%20")
+        val searchQuery = "$movieTitle+trailer"
+        val googleUri = Uri.parse("https://www.google.com/search?q=$searchQuery")
+        val webIntent = Intent(Intent.ACTION_VIEW, googleUri)
+        try {
+            startActivity(webIntent)
+        } catch (e: ActivityNotFoundException) {
+        }
+    }
+    private fun shareMovieDetails() {
+        val shareIntent = Intent(Intent.ACTION_SEND)
+        shareIntent.type = "text/plain"
+        shareIntent.putExtra(Intent.EXTRA_SUBJECT, "Movie Details")
+        shareIntent.putExtra(Intent.EXTRA_TEXT, "${movie.title}: ${movie.overview}")
+        val chooser = Intent.createChooser(shareIntent, "Share Movie Details")
+        if (shareIntent.resolveActivity(packageManager) != null) {
+            startActivity(chooser)
+        } else {
+            Toast.makeText(this, "No app can handle this action", Toast.LENGTH_SHORT).show()
         }
     }
 }

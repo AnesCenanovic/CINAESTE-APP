@@ -1,13 +1,20 @@
 package com.example.spirala1
 
+import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
+import android.net.ConnectivityManager
+import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -22,11 +29,12 @@ class MainActivity : AppCompatActivity() {
     private lateinit var recentMoviesAdapter: MovieListAdapterRecent
     private var favoriteMoviesList =  getFavoriteMovies()
     private var recentMoviesList =  getRecentMovies()
+    private lateinit var searchText: EditText
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         setContentView(R.layout.activity_main)
+        searchText = findViewById(R.id.searchText)
         favoriteMovies = findViewById(R.id.favoriteMovies)
         favoriteMovies.layoutManager = LinearLayoutManager(
             this,
@@ -43,13 +51,17 @@ class MainActivity : AppCompatActivity() {
             LinearLayoutManager.HORIZONTAL,
             false
         )
-        recentMoviesAdapter = MovieListAdapterRecent(arrayListOf()) { movie -> showMovieDetails(movie) }
+        recentMoviesAdapter =
+            MovieListAdapterRecent(arrayListOf()) { movie -> showMovieDetails(movie) }
         recentMovies.adapter = recentMoviesAdapter
         recentMoviesAdapter.updateMovies(recentMoviesList)
 
-
     }
-
+    private fun handleSendText(intent: Intent) {
+        intent.getStringExtra(Intent.EXTRA_TEXT)?.let {
+            searchText.setText(it)
+        }
+    }
     private fun showMovieDetails(movie: Movie) {
         val intent = Intent(this, MovieDetailActivity::class.java).apply {
             putExtra("movie_title", movie.title)
@@ -172,4 +184,16 @@ fun getRecentMovies(): List<Movie> {
             "05.11.2021.","https://www.imdb.com/title/tt9032400/",
             "scifi")
     )
+}
+class NetworkChangeReceiver : BroadcastReceiver() {
+    override fun onReceive(context: Context, intent: Intent) {
+        val connManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val networkInfo = connManager.activeNetworkInfo
+        val isConnected = networkInfo != null && networkInfo.isConnectedOrConnecting
+
+        if (!isConnected) {
+            // Uređaj je izgubio vezu s internetom
+            Toast.makeText(context, "Izgubili ste vezu s internetom", Toast.LENGTH_SHORT).show()
+        }
+    }
 }
