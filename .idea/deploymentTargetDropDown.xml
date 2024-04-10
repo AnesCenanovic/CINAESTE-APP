@@ -8,6 +8,15 @@
       <entry key="app">
         <State />
       </entry>
+      <entry key="testFavoriteMoviesListDisplayed()">
+        <State />
+      </entry>
+      <entry key="testMovieTitleClickOpensQuery()">
+        <State />
+      </entry>
+      <entry key="testShareButtonOpensShareIntent()">
+        <State />
+      </entry>
     </value>
   </component>
 </project>
