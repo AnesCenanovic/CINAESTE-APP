@@ -14,7 +14,7 @@ class RecentMoviesFragment : Fragment() {
     private lateinit var recentMoviesAdapter: MovieListAdapter
     private var recentMoviesList =  getRecentMovies()
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        var view =  inflater.inflate(R.layout.fragment_recent_movies, container, false)
+        val view =  inflater.inflate(R.layout.fragment_recent_movies, container, false)
         recentMovies = view.findViewById(R.id.recentMovies)
         recentMovies.layoutManager = GridLayoutManager(activity, 2)
         recentMoviesAdapter = MovieListAdapter(arrayListOf()) { movie -> showMovieDetails(movie) }

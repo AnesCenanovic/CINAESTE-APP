@@ -77,7 +77,7 @@ class MovieListAdapter(
     override fun getItemCount(): Int = movies.size
     override fun onBindViewHolder(holder: MovieViewHolder, position: Int) {
         holder.movieTitle.text = movies[position].title;
-        val genreMatch: String = movies[position].genre
+        val genreMatch: String? = movies[position].genre
         //Pronalazimo id drawable elementa na osnovu naziva zanra
         val context: Context = holder.movieImage.context
         var id: Int = context.resources
@@ -110,7 +110,7 @@ class MovieListAdapterRecent(
     override fun getItemCount(): Int = movies.size
     override fun onBindViewHolder(holder: MovieViewHolder, position: Int) {
         holder.movieTitle.text = movies[position].title;
-        val genreMatch: String = movies[position].genre
+        val genreMatch: String? = movies[position].genre
         //Pronalazimo id drawable elementa na osnovu naziva zanra
         val context: Context = holder.movieImage.context
         var id: Int = context.resources
@@ -135,8 +135,9 @@ data class Movie(
     val title: String,
     val overview: String,
     val releaseDate: String,
-    val homepage: String,
-    val genre: String
+    val homepage: String?,
+    val genre: String?,
+    val posterPath: String?
 )
 
 fun getFavoriteMovies(): List<Movie> {
@@ -144,19 +145,19 @@ fun getFavoriteMovies(): List<Movie> {
         Movie(1,"Pride and prejudice",
             "Sparks fly when spirited Elizabeth Bennet meets single, rich, and proud Mr. Darcy. But Mr. Darcy reluctantly finds himself falling in love with a woman beneath his class. Can each overcome their own pride and prejudice?",
             "16.02.2005.","https://www.imdb.com/title/tt0414387/",
-            "drama"),
+            "drama",null),
         Movie(2,"The Shawshank Redemption",
             "Two imprisoned men bond over a number of years, finding solace and eventual redemption through acts of common decency.",
             "14.10.1994.","https://www.imdb.com/title/tt0111161/",
-            "drama"),
+            "drama",null),
         Movie(3,"Inception",
             "A thief who steals corporate secrets through the use of dream-sharing technology is given the inverse task of planting an idea into the mind of a C.E.O.",
             "16.07.2010.","https://www.imdb.com/title/tt1375666/",
-            "scifi"),
+            "scifi",null),
         Movie(4,"The Dark Knight",
             "When the menace known as the Joker wreaks havoc and chaos on the people of Gotham, Batman must accept one of the greatest psychological and physical tests of his ability to fight injustice.",
             "18.07.2008.","https://www.imdb.com/title/tt0468569/",
-            "action")
+            "action",null)
     )
 }
 fun getRecentMovies(): List<Movie> {
@@ -164,19 +165,19 @@ fun getRecentMovies(): List<Movie> {
         Movie(1,"Furiosa: A Mad Max Saga",
             "The origin story of renegade warrior Furiosa before her encounter and teamup with Mad Max.",
             "24.05.2024.","https://www.imdb.com/title/tt12037194",
-            "action"),
+            "action",null),
         Movie(2,"Spider-Man: No Way Home",
             "With Spider-Man's identity now revealed, Peter Parker asks Doctor Strange for help. When a spell goes wrong, dangerous foes from other worlds start to appear, forcing Peter to discover what it truly means to be Spider-Man.",
             "17.12.2021.","https://www.imdb.com/title/tt10872600/",
-            "action"),
+            "action",null),
         Movie(3,"Dune",
             "Feature adaptation of Frank Herbert's science fiction novel, about the son of a noble family entrusted with the protection of the most valuable asset and most vital element in the galaxy.",
             "21.10.2021.","https://www.imdb.com/title/tt1160419/",
-            "scifi"),
+            "scifi",null),
         Movie(4,"Eternals",
             "The saga of the Eternals, a race of immortal beings who lived on Earth and shaped its history and civilizations.",
             "05.11.2021.","https://www.imdb.com/title/tt9032400/",
-            "scifi")
+            "scifi",null)
     )
 }
 class NetworkChangeReceiver : BroadcastReceiver() {
