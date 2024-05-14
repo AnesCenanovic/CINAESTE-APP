@@ -26,7 +26,16 @@ android {
                 "proguard-rules.pro"
             )
         }
+
+        debug{
+            buildConfigField ("String", "TMDB_API_KEY", project.properties["TMDB_API_KEY"].toString())
+        }
     }
+
+    buildFeatures {
+        buildConfig = true
+    }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8

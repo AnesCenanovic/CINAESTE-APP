@@ -84,7 +84,7 @@ class SearchFragment : Fragment() {
                             val posterPath = movie.getString("poster_path")
                             val overview = movie.getString("overview")
                             val releaseDate = movie.getString("release_date")
-                            movies.add(Movie(id.toLong(), title, overview, releaseDate, null, null, posterPath))
+                            movies.add(Movie(id.toLong(), title, overview, releaseDate, null, null, posterPath,null))
                             if (i == 5) break
                         }
                     }

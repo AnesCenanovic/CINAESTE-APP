@@ -66,7 +66,7 @@ class MovieDetailActivity : AppCompatActivity() {
         movies.addAll(getRecentMovies())
         movies.addAll(getFavoriteMovies())
         val movie= movies.find { movie -> name == movie.title }
-        return movie?:Movie(0,"Test","Test","Test","Test","Test","Test")
+        return movie?:Movie(0,"Test","Test","Test","Test","Test","Test","Test")
     }
 
     private fun showWebsite(){
