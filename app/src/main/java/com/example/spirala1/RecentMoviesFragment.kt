@@ -5,9 +5,14 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 
 class RecentMoviesFragment : Fragment() {
     private lateinit var recentMovies: RecyclerView
@@ -20,6 +25,15 @@ class RecentMoviesFragment : Fragment() {
         recentMoviesAdapter = MovieListAdapter(arrayListOf()) { movie -> showMovieDetails(movie) }
         recentMovies.adapter=recentMoviesAdapter
         recentMoviesAdapter.updateMovies(recentMoviesList)
+
+        val scope = CoroutineScope(Job() + Dispatchers.Main)
+        scope.launch {
+            val result = SearchFragment.MovieRepository.getUpcomingMovies()
+            when (result) {
+                is GetMoviesResponse -> onSuccess(result.movies)
+                else -> onError()
+            }
+        }
         return view;
     }
     private fun showMovieDetails(movie: Movie) {
@@ -28,4 +42,26 @@ class RecentMoviesFragment : Fragment() {
         }
         startActivity(intent)
     }
+    suspend fun getUpcoming( ){
+        val scope = CoroutineScope(Job() + Dispatchers.Main)
+        // Create a new coroutine on the UI thread
+        scope.launch{}
+        // Opcija 1
+        val result = SearchFragment.MovieRepository.getUpcomingMovies()
+        // Display result of the network request to the user
+        when (result) {
+            is GetMoviesResponse -> onSuccess(result.movies)
+            else-> onError()
+        }
+    }
+    fun onSuccess(movies:List<Movie>){
+        val toast = Toast.makeText(context, "Upcoming movies found", Toast.LENGTH_SHORT)
+        toast.show()
+        recentMoviesAdapter.updateMovies(movies)
+    }
+    fun onError() {
+        val toast = Toast.makeText(context, "Search error", Toast.LENGTH_SHORT)
+        toast.show()
+    }
+
 }

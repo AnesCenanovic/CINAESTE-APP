@@ -62,7 +62,7 @@ class SearchFragment : Fragment() {
 
     object MovieRepository {
 
-        private const val tmdb_api_key : String = "47c6995f7a999a08f0547a0cfe0aa2ea"
+        private const val tmdb_api_key : String = BuildConfig.TMDB_API_KEY
 
         suspend fun searchRequest(
             query: String
@@ -84,7 +84,7 @@ class SearchFragment : Fragment() {
                             val posterPath = movie.getString("poster_path")
                             val overview = movie.getString("overview")
                             val releaseDate = movie.getString("release_date")
-                            movies.add(Movie(id.toLong(), title, overview, releaseDate, null, null, posterPath,null))
+                            movies.add(Movie(id.toLong(), title, overview, releaseDate, null, posterPath,null))
                             if (i == 5) break
                         }
                     }
@@ -98,6 +98,15 @@ class SearchFragment : Fragment() {
                     return@withContext Result.Error(Exception("Cannot parse JSON"))
                 }
 
+            }
+        }
+
+        suspend fun getUpcomingMovies(
+        ) : GetMoviesResponse?{
+            return withContext(Dispatchers.IO) {
+                var response = Api.ApiAdapter.retrofit.getUpcomingMovies()
+                val responseBody = response.body()
+                return@withContext responseBody
             }
         }
     }

@@ -23,12 +23,8 @@ class searchMoviesAdapter(
     override fun getItemCount(): Int = movies.size
     override fun onBindViewHolder(holder: searchMovieViewHolder, position: Int) {
         holder.movieTitle.text = movies[position].title;
-        val genreMatch: String? = movies[position].genre
         val context: Context = holder.movieImage.getContext()
         var id: Int = 0;
-        if (genreMatch!==null)
-            id = context.getResources()
-                .getIdentifier(genreMatch, "drawable", context.getPackageName())
         if (id===0) id=context.getResources()
             .getIdentifier("picture1", "drawable", context.getPackageName())
         Glide.with(context)
