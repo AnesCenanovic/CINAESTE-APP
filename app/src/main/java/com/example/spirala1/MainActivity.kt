@@ -17,6 +17,15 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.room.ColumnInfo
+import androidx.room.Dao
+import androidx.room.Database
+import androidx.room.Entity
+import androidx.room.Insert
+import androidx.room.PrimaryKey
+import androidx.room.Query
+import androidx.room.Room
+import androidx.room.RoomDatabase
 import com.google.gson.annotations.SerializedName
 
 class MainActivity : AppCompatActivity() {
@@ -127,14 +136,15 @@ data class GetMoviesResponse(
     @SerializedName("total_pages") val pages: Int
 )
 
+@Entity
 data class Movie (
-    @SerializedName("id") var id: Long,
-    @SerializedName("original_title")  var title: String,
-    @SerializedName("overview")  var overview: String,
-    @SerializedName("release_date")   var releaseDate: String,
-    @SerializedName("homepage")   var homepage: String?,
-    @SerializedName("poster_path") var posterPath: String?,
-    @SerializedName("backdrop_path")  var backdropPath: String?
+    @PrimaryKey @SerializedName("id") var id: Long,
+    @ColumnInfo(name = "title") @SerializedName("original_title")  var title: String,
+    @ColumnInfo(name = "overview") @SerializedName("overview")  var overview: String,
+    @ColumnInfo(name = "release_date") @SerializedName("release_date")   var releaseDate: String,
+    @ColumnInfo(name = "homepage") @SerializedName("homepage")   var homepage: String?,
+    @ColumnInfo(name = "poster_path") @SerializedName("poster_path") var posterPath: String?,
+    @ColumnInfo(name = "backdrop_path") @SerializedName("backdrop_path")  var backdropPath: String?
 ): Parcelable {
     constructor(parcel: Parcel) : this(
         parcel.readLong(),
@@ -164,6 +174,36 @@ data class Movie (
         override fun newArray(size: Int): Array<Movie?> {
             return arrayOfNulls(size)
         }
+    }
+}
+
+@Dao
+interface MovieDao {
+    @Query("SELECT * FROM Movie")
+    suspend fun getAll(): List<Movie>
+    @Insert
+    suspend fun insertAll(vararg movies: Movie)
+}
+
+@Database(entities = arrayOf(Movie::class), version = 1)
+abstract class AppDatabase : RoomDatabase() {
+    abstract fun movieDao(): MovieDao
+    companion object {
+        private var INSTANCE: AppDatabase? = null
+        fun getInstance(context: Context): AppDatabase {
+            if (INSTANCE == null) {
+                synchronized(AppDatabase::class) {
+                    INSTANCE = buildRoomDB(context)
+                }
+            }
+            return INSTANCE!!
+        }
+        private fun buildRoomDB(context: Context) =
+            Room.databaseBuilder(
+                context.applicationContext,
+                AppDatabase::class.java,
+                "cinaeste-db"
+            ).build()
     }
 }
 

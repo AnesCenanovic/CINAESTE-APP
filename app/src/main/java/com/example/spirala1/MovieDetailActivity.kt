@@ -5,14 +5,21 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.view.View
+import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 
 class MovieDetailActivity : AppCompatActivity() {
     private lateinit var movie: Movie
+    private lateinit var addFavorite : Button
     private lateinit var title : TextView
     private lateinit var overview : TextView
     private lateinit var releaseDate : TextView
@@ -25,6 +32,7 @@ class MovieDetailActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_movie_detail)
         title = findViewById(R.id.movie_title)
+        addFavorite = findViewById(R.id.addFavourite)
         overview = findViewById(R.id.movie_overview)
         releaseDate = findViewById(R.id.movie_release_date)
         genre = findViewById(R.id.movie_genre)
@@ -47,7 +55,32 @@ class MovieDetailActivity : AppCompatActivity() {
         shareButton.setOnClickListener {
             shareMovieDetails()
         }
+        addFavorite.setOnClickListener{
+            writeDB(this,movie)
+        }
     }
+
+    fun writeDB(context: Context, movie:Movie){
+        val scope = CoroutineScope(Job() + Dispatchers.Main)
+        scope.launch{
+            val result = SearchFragment.MovieRepository.writeFavorite(context,movie)
+            when (result) {
+                is String -> onSuccess1(result)
+                else-> onError()
+            }
+        }
+    }
+
+    fun onSuccess1(message:String){
+        val toast = Toast.makeText(applicationContext, "Spaseno", Toast.LENGTH_SHORT)
+        toast.show()
+        addFavorite.visibility= View.GONE
+    }
+    fun onError() {
+        val toast = Toast.makeText(applicationContext, "Error", Toast.LENGTH_SHORT)
+        toast.show()
+    }
+
     private fun populateDetails() {
         title.text=movie.title
         releaseDate.text=movie.releaseDate
